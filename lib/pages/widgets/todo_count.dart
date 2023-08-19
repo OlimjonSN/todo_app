@@ -18,7 +18,7 @@ class TodoCount extends StatelessWidget {
       crossAxisAlignment: isStartPosition ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         Text(
-          '$count',
+          count < 10 ? '0$count' : 'count',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black, fontFamily: GoogleFonts.poppins().fontFamily),
         ),
         Text(

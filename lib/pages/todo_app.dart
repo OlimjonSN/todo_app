@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/task_model.dart';
 import 'widgets/date_todo.dart';
 import 'widgets/task_list.dart';
 import 'widgets/todo_count.dart';
@@ -36,6 +37,24 @@ class _TodoAppState extends State<TodoApp> {
     });
   }
 
+  void isDone(String taskID) {
+    setState(() {
+      tasks.firstWhere((element) => element.id == taskID).toggleDone();
+    });
+  }
+
+  void deleteTask(String taskID) {
+    setState(() {
+      tasks.removeWhere((element) => element.id == taskID);
+    });
+  }
+
+  int get isDoneCount {
+    return tasks.where((element) => element.isDone).length;
+  }
+
+  final List<TaskModel> tasks = Tasks().list;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,15 +65,20 @@ class _TodoAppState extends State<TodoApp> {
       ),
       body: Column(
         children: [
+          // ? tanlangan vaqtni ko'rsatish uchun
           DateTodo(selectDate: selectDate, date: selectedDate, decreaseDate: decreaseDate, increaseDate: increaseDate),
-          const Row(
+
+          // ? rejalarni bajarilgan va bajarilmaganlarini ko'rsatish uchun
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TodoCount(count: 03, title: 'Barcha rejalaringiz'),
-              TodoCount(count: 00, title: 'Tugatilgan rejalaringiz', isStartPosition: false),
+              TodoCount(count: tasks.length, title: 'Barcha rejalaringiz'),
+              TodoCount(count: isDoneCount, title: 'Tugatilgan rejalaringiz', isStartPosition: false),
             ],
           ),
-          const TaskList()
+
+          // ? rejalarni ko'rsatish uchun
+          TaskList(list: tasks, isDone: isDone, deleteTask: deleteTask)
         ],
       ),
       floatingActionButton: FloatingActionButton(
