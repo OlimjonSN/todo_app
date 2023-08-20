@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../models/task_model.dart';
 import 'widgets/date_todo.dart';
@@ -14,6 +15,7 @@ class TodoApp extends StatefulWidget {
 
 class _TodoAppState extends State<TodoApp> {
   DateTime selectedDate = DateTime.now();
+  TextEditingController titleController = TextEditingController();
 
   void selectDate(BuildContext context) {
     showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2050)).then((value) {
@@ -23,6 +25,47 @@ class _TodoAppState extends State<TodoApp> {
         });
       }
     });
+  }
+
+  void addTask() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(children: [
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'title',
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Reja kuni tanlanmagan...',
+                    style: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily),
+                  ),
+                  TextButton(onPressed: () => selectDate(context), child: Text('Kunni Tanlash', style: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily)))
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(onPressed: () {}, child: Text('Bekor qilish', style: TextStyle(fontSize: 16, color: Colors.grey, fontFamily: GoogleFonts.poppins().fontFamily))),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Qo\'shish',
+                        style: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily),
+                      )),
+                ],
+              )
+            ]),
+          );
+        });
   }
 
   void decreaseDate() {
@@ -82,7 +125,9 @@ class _TodoAppState extends State<TodoApp> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          addTask();
+        },
         child: const Icon(Icons.add),
       ),
     );
