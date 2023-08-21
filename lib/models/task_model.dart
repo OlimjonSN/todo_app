@@ -18,4 +18,14 @@ class Tasks {
     TaskModel(id: '3', name: 'suhbatga tayorlanish', date: DateTime.now()),
   ];
   List<TaskModel> get list => _list;
+
+  List<TaskModel> todoByDay(
+    DateTime day,
+  ) {
+    return _list.where((element) => element.date.day == day.day && element.date.month == day.month && element.date.year == day.year).toList();
+  }
+
+  void addTodoTask(String title, DateTime date) {
+    _list.insert(0, TaskModel(id: DateTime.now().toString(), name: title, date: date));
+  }
 }

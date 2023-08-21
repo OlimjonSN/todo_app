@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'package:todo_app/pages/widgets/add_task_windows.dart';
 
 import '../models/task_model.dart';
 import 'widgets/date_todo.dart';
@@ -15,7 +16,7 @@ class TodoApp extends StatefulWidget {
 
 class _TodoAppState extends State<TodoApp> {
   DateTime selectedDate = DateTime.now();
-  TextEditingController titleController = TextEditingController();
+  DateTime? selectedtaskDate;
 
   void selectDate(BuildContext context) {
     showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2050)).then((value) {
@@ -27,44 +28,18 @@ class _TodoAppState extends State<TodoApp> {
     });
   }
 
+  void addTaskFunction(String title, DateTime date) {
+    setState(() {
+      tasks.addTodoTask(title, date);
+    });
+  }
+
   void addTask() {
     showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(children: [
-              TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'title',
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Reja kuni tanlanmagan...',
-                    style: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily),
-                  ),
-                  TextButton(onPressed: () => selectDate(context), child: Text('Kunni Tanlash', style: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily)))
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(onPressed: () {}, child: Text('Bekor qilish', style: TextStyle(fontSize: 16, color: Colors.grey, fontFamily: GoogleFonts.poppins().fontFamily))),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Qo\'shish',
-                        style: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily),
-                      )),
-                ],
-              )
-            ]),
-          );
+          return AddTaskWindow(addTaskFunction: addTaskFunction);
         });
   }
 
@@ -82,21 +57,21 @@ class _TodoAppState extends State<TodoApp> {
 
   void isDone(String taskID) {
     setState(() {
-      tasks.firstWhere((element) => element.id == taskID).toggleDone();
+      tasks.todoByDay(selectedDate).firstWhere((element) => element.id == taskID).toggleDone();
     });
   }
 
   void deleteTask(String taskID) {
     setState(() {
-      tasks.removeWhere((element) => element.id == taskID);
+      tasks.list.removeWhere((element) => element.id == taskID);
     });
   }
 
   int get isDoneCount {
-    return tasks.where((element) => element.isDone).length;
+    return tasks.todoByDay(selectedDate).where((element) => element.isDone).length;
   }
 
-  final List<TaskModel> tasks = Tasks().list;
+  final Tasks tasks = Tasks();
 
   @override
   Widget build(BuildContext context) {
@@ -115,13 +90,13 @@ class _TodoAppState extends State<TodoApp> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TodoCount(count: tasks.length, title: 'Barcha rejalaringiz'),
+              TodoCount(count: tasks.todoByDay(selectedDate).length, title: 'Barcha rejalaringiz'),
               TodoCount(count: isDoneCount, title: 'Tugatilgan rejalaringiz', isStartPosition: false),
             ],
           ),
 
           // ? rejalarni ko'rsatish uchun
-          TaskList(list: tasks, isDone: isDone, deleteTask: deleteTask)
+          TaskList(list: tasks.todoByDay(selectedDate), isDone: isDone, deleteTask: deleteTask)
         ],
       ),
       floatingActionButton: FloatingActionButton(
