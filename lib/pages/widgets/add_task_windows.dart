@@ -35,7 +35,7 @@ class _AddTaskWindowState extends State<AddTaskWindow> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).viewInsets.bottom);
+
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? MediaQuery.of(context).viewInsets.bottom + 10 : 100, left: 20, right: 20, top: 20),

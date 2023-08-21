@@ -18,7 +18,7 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: list.length > 0
+        child: list.isNotEmpty
             ? ListView.builder(
                 itemCount: list.length,
                 itemBuilder: ((context, index) {
